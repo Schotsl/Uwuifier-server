@@ -7,6 +7,7 @@ import {
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/middleware.ts";
 
 import historyRouter from "./router/historyRouter.ts";
+import translateRouter from "./router/translateRouter.ts";
 
 const application = new Application();
 
@@ -16,7 +17,10 @@ application.use(errorHandler);
 application.use(limitHandler);
 application.use(postHandler);
 
+application.use(translateRouter.routes());
 application.use(historyRouter.routes());
+
+application.use(translateRouter.allowedMethods());
 application.use(historyRouter.allowedMethods());
 
 application.listen({ port: 8080 });

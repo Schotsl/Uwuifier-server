@@ -51,9 +51,9 @@ export default class HistoryController implements InterfaceController {
     const value = await body.value;
     delete value.uuid;
 
-    validateSmallint(value.amount, 'amount', true);
+    validateSmallint(value.amount, "amount", true);
 
-    value.amount = typeof value.amount === "undefined" ? 1 : value.amount
+    value.amount = typeof value.amount === "undefined" ? 1 : value.amount;
 
     // TODO: Prevent non existing properties from being copied
 
@@ -73,9 +73,9 @@ export default class HistoryController implements InterfaceController {
     const value = await body.value;
     delete value.uuid;
 
-    validateSmallint(value.amount, 'amount', true);
+    validateSmallint(value.amount, "amount", true);
 
-    value.amount = typeof value.amount === "undefined" ? 1 : value.amount
+    value.amount = typeof value.amount === "undefined" ? 1 : value.amount;
 
     const history = new HistoryEntity();
     Object.assign(history, value);
