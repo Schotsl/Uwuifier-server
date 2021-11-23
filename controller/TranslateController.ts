@@ -1,12 +1,21 @@
 import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 import { Request, Response } from "https://deno.land/x/oak@v9.0.1/mod.ts";
 import { validateDatatype } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
+import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 
 import Uwuifier from "https://deno.land/x/uwuifier/src/index.ts";
+import HistoryEntity from "../entity/HistoryEntity.ts";
+import HistoryRepository from "../repository/HistoryRepository.ts";
 import TranslateEntity from "../entity/TranslateEntity.ts";
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 
 export default class TranslateController implements InterfaceController {
+  private historyRepository: HistoryRepository;
+
+  constructor(mysqlClient: Client) {
+    this.historyRepository = new HistoryRepository(mysqlClient);
+  }
+
   getCollection() {
     throw new MissingImplementation();
   }
@@ -32,8 +41,14 @@ export default class TranslateController implements InterfaceController {
 
     const translate = new TranslateEntity();
     const uwuifier = new Uwuifier();
+    const history = new HistoryEntity();
 
     translate.content = uwuifier.uwuifySentence(value.content);
+    history.amount = 1;
+
+    // No need to await this
+    this.historyRepository.addObject(history);
+
     response.body = translate;
   }
 }
