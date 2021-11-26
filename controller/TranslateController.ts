@@ -43,18 +43,46 @@ export default class TranslateController implements InterfaceController {
 
     const translate = new TranslateEntity();
     const uwuifier = new Uwuifier();
-    const history = new HistoryEntity();
 
     translate.content = uwuifier.uwuifySentence(value.content);
+    response.body = translate;
+
+    const server = ipv4;
+    const client = request.ip === "127.0.0.1" ? ipv4 : request.ip;
+
+    // TODO: Could be ran in parallel
+
+    const history = new HistoryEntity();
+    const responses = await Promise.all([
+      fetch(`http://ip-api.com/json/${server}`),
+      fetch(`http://ip-api.com/json/${client}`),
+    ]);
+
+    const parsed = await Promise.all([
+      responses[0].json(),
+      responses[1].json(),
+    ]);
 
     history.origin = "api";
-    history.server = ipv4;
-    history.client = request.ip;
     history.amount = 1;
+
+    history.server = {
+      ipv4: server,
+      cords: {
+        lat: parsed[0].lat,
+        lng: parsed[0].lon,
+      },
+    };
+
+    history.client = {
+      ipv4: client,
+      cords: {
+        lat: parsed[1].lat,
+        lng: parsed[1].lon,
+      },
+    };
 
     // No need to await this
     this.historyRepository.addObject(history);
-
-    response.body = translate;
   }
 }

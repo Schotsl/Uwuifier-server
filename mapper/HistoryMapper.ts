@@ -13,8 +13,22 @@ export default class HistoryMapper implements InterfaceMapper {
     history.updated = row.updated;
     history.amount = row.amount;
     history.origin = row.origin;
-    history.client = row.client;
-    history.server = row.server;
+
+    history.client = {
+      ipv4: row.client_ipv4,
+      cords: {
+        lat: row.client_lat,
+        lng: row.client_lng,
+      },
+    };
+
+    history.server = {
+      ipv4: row.server_ipv4,
+      cords: {
+        lat: row.server_lat,
+        lng: row.server_lng,
+      },
+    };
 
     return history;
   }

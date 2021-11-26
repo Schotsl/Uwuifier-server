@@ -75,16 +75,44 @@ export default class HistoryController implements InterfaceController {
     validateVarchar(value.origin, "origin", true);
     validateSmallint(value.amount, "amount", true);
 
-    value.server = ipv4;
-    value.client = request.ip;
-
     value.amount = typeof value.amount === "undefined" ? 1 : value.amount;
     value.origin = typeof value.origin === "undefined"
       ? "android"
       : value.origin;
 
+    const server = ipv4;
+    const client = request.ip === "127.0.0.1" ? ipv4 : request.ip;
+
+    // TODO: Could be ran in parallel
+
     const history = new HistoryEntity();
+    const responses = await Promise.all([
+      fetch(`http://ip-api.com/json/${server}`),
+      fetch(`http://ip-api.com/json/${client}`),
+    ]);
+
+    const parsed = await Promise.all([
+      responses[0].json(),
+      responses[1].json(),
+    ]);
+
     Object.assign(history, value);
+
+    history.server = {
+      ipv4: server,
+      cords: {
+        lat: parsed[0].lat,
+        lng: parsed[0].lon,
+      },
+    };
+
+    history.client = {
+      ipv4: client,
+      cords: {
+        lat: parsed[1].lat,
+        lng: parsed[1].lon,
+      },
+    };
 
     const fetched = await this.historyRepository.addObject(history);
     const message = new ServerSentEvent("message", fetched);
