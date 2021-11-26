@@ -28,4 +28,9 @@ historyRouter.delete(
   historyController.removeObject.bind(historyController),
 );
 
+historyRouter.get(
+  "/subscribe",
+  historyController.subscribeObject.bind(historyController),
+);
+
 export default historyRouter;
