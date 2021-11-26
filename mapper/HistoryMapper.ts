@@ -17,16 +17,16 @@ export default class HistoryMapper implements InterfaceMapper {
     history.client = {
       ipv4: row.client_ipv4,
       cords: {
-        lat: row.client_lat,
-        lng: row.client_lng,
+        lat: parseFloat(row.client_lat),
+        lng: parseFloat(row.client_lng),
       },
     };
 
     history.server = {
       ipv4: row.server_ipv4,
       cords: {
-        lat: row.server_lat,
-        lng: row.server_lng,
+        lat: parseFloat(row.server_lat),
+        lng: parseFloat(row.server_lng),
       },
     };
 
