@@ -9,6 +9,8 @@ import HistoryRepository from "../repository/HistoryRepository.ts";
 import TranslateEntity from "../entity/TranslateEntity.ts";
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 
+import ipv4 from "../ipv4.ts";
+
 export default class TranslateController implements InterfaceController {
   private historyRepository: HistoryRepository;
 
@@ -44,6 +46,10 @@ export default class TranslateController implements InterfaceController {
     const history = new HistoryEntity();
 
     translate.content = uwuifier.uwuifySentence(value.content);
+
+    history.origin = "API";
+    history.server = ipv4;
+    history.client = request.ip;
     history.amount = 1;
 
     // No need to await this

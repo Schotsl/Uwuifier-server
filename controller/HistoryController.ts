@@ -5,10 +5,16 @@ import {
   Response,
   State,
 } from "https://deno.land/x/oak@v9.0.1/mod.ts";
-import { validateSmallint, validateVarchar } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
+import {
+  validateSmallint,
+  validateVarchar,
+} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
+
 import HistoryEntity from "../entity/HistoryEntity.ts";
 import HistoryRepository from "../repository/HistoryRepository.ts";
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
+
+import ipv4 from "../ipv4.ts";
 
 export default class HistoryController implements InterfaceController {
   private historyRepository: HistoryRepository;
@@ -58,6 +64,8 @@ export default class HistoryController implements InterfaceController {
     validateVarchar(value.origin, "origin");
     validateSmallint(value.amount, "amount");
 
+    value.server = ipv4;
+    value.client = request.ip;
     value.amount = typeof value.amount === "undefined" ? 1 : value.amount;
 
     const history = new HistoryEntity();
