@@ -61,12 +61,14 @@ export default class HistoryController implements InterfaceController {
     const value = await body.value;
     delete value.uuid;
 
-    validateVarchar(value.origin, "origin");
+    validateVarchar(value.origin, "origin", true);
     validateSmallint(value.amount, "amount", true);
 
     value.server = ipv4;
     value.client = request.ip;
+
     value.amount = typeof value.amount === "undefined" ? 1 : value.amount;
+    value.origin = typeof value.origin === "undefined" ? 'android' : value.origin;
 
     const history = new HistoryEntity();
     Object.assign(history, value);
