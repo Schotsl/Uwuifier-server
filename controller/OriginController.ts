@@ -1,3 +1,4 @@
+import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 import { validateVarchar } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 import {
@@ -41,25 +42,8 @@ export default class OriginController implements InterfaceController {
     response.status = 204;
   }
 
-  async updateObject(
-    { response, request, params }: {
-      response: Response;
-      request: Request;
-      params: { uuid: string };
-    },
-  ) {
-    const body = await request.body();
-    const value = await body.value;
-    delete value.uuid;
-
-    validateVarchar(value.title, "title", true);
-
-    // TODO: Prevent non existing properties from being copied
-
-    const origin = new OriginEntity(params.uuid);
-    Object.assign(origin, value);
-
-    response.body = await this.originRepository.updateObject(origin);
+  updateObject() {
+    throw new MissingImplementation();
   }
 
   async addObject(

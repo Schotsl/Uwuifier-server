@@ -1,10 +1,11 @@
+import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 import {
   Request,
   Response,
   State,
 } from "https://deno.land/x/oak@v9.0.1/mod.ts";
-import { validateSmallint } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
+import { validateSmallint, validateVarchar } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
 import HistoryEntity from "../entity/HistoryEntity.ts";
 import HistoryRepository from "../repository/HistoryRepository.ts";
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
@@ -40,27 +41,8 @@ export default class HistoryController implements InterfaceController {
     response.status = 204;
   }
 
-  async updateObject(
-    { response, request, params }: {
-      response: Response;
-      request: Request;
-      params: { uuid: string };
-    },
-  ) {
-    const body = await request.body();
-    const value = await body.value;
-    delete value.uuid;
-
-    validateSmallint(value.amount, "amount", true);
-
-    value.amount = typeof value.amount === "undefined" ? 1 : value.amount;
-
-    // TODO: Prevent non existing properties from being copied
-
-    const history = new HistoryEntity(params.uuid);
-    Object.assign(history, value);
-
-    response.body = await this.historyRepository.updateObject(history);
+  updateObject() {
+    throw new MissingImplementation();
   }
 
   async addObject(
@@ -73,7 +55,8 @@ export default class HistoryController implements InterfaceController {
     const value = await body.value;
     delete value.uuid;
 
-    validateSmallint(value.amount, "amount", true);
+    validateVarchar(value.origin, "origin");
+    validateSmallint(value.amount, "amount");
 
     value.amount = typeof value.amount === "undefined" ? 1 : value.amount;
 

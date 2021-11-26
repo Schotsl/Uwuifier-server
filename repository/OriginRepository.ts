@@ -1,5 +1,6 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 import { MissingResource } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
+import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 
 import OriginEntity from "../entity/OriginEntity.ts";
 import OriginMapper from "../mapper/OriginMapper.ts";
@@ -37,30 +38,8 @@ export default class OriginRepository implements InterfaceRepository {
     return this.originMapper.mapCollection(rows, offset, limit, total);
   }
 
-  public async updateObject(
-    object: Partial<OriginEntity>,
-  ): Promise<OriginEntity> {
-    const values = [];
-    const exclude = ["created", "updated", "uuid"];
-
-    let query = "UPDATE uwuifier.origin SET";
-
-    for (const [key, value] of Object.entries(object)) {
-      if (value !== null && !exclude.includes(key)) {
-        query += ` origin.${key}=?,`;
-        values.push(value);
-      }
-    }
-
-    if (values.length > 0) {
-      query = query.slice(0, -1);
-      query += " WHERE origin.uuid = UNHEX(REPLACE(?, '-', ''))";
-
-      await this.mysqlClient.execute(query, [...values, object.uuid]);
-    }
-
-    const data = await this.getObject(object.uuid!);
-    return data!;
+  public updateObject(): Promise<OriginEntity> {
+    throw new MissingImplementation();
   }
 
   public async removeObject(uuid: string): Promise<void> {

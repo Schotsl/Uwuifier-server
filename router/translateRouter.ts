@@ -8,9 +8,24 @@ const translateRouter = new Router({
   prefix: "/v1/translate",
 });
 
+translateRouter.get(
+  "/",
+  translateController.getCollection.bind(translateController),
+);
+
 translateRouter.post(
   "/",
   translateController.addObject.bind(translateController),
+);
+
+translateRouter.put(
+  "/:uuid",
+  translateController.updateObject.bind(translateController),
+);
+
+translateRouter.delete(
+  "/:uuid",
+  translateController.removeObject.bind(translateController),
 );
 
 export default translateRouter;
