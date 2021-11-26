@@ -62,7 +62,7 @@ export default class HistoryController implements InterfaceController {
     delete value.uuid;
 
     validateVarchar(value.origin, "origin");
-    validateSmallint(value.amount, "amount");
+    validateSmallint(value.amount, "amount", true);
 
     value.server = ipv4;
     value.client = request.ip;
