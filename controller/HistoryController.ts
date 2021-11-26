@@ -1,14 +1,18 @@
 import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 import {
-  Request,
-  Response,
-  State,
-} from "https://deno.land/x/oak@v9.0.1/mod.ts";
-import {
   validateSmallint,
   validateVarchar,
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
+
+import {
+  Context,
+  Request,
+  Response,
+  ServerSentEvent,
+  ServerSentEventTarget,
+  State,
+} from "https://deno.land/x/oak@v9.0.1/mod.ts";
 
 import HistoryEntity from "../entity/HistoryEntity.ts";
 import HistoryRepository from "../repository/HistoryRepository.ts";
@@ -18,6 +22,7 @@ import ipv4 from "../ipv4.ts";
 
 export default class HistoryController implements InterfaceController {
   private historyRepository: HistoryRepository;
+  private subscribedClients: ServerSentEventTarget[] = [];
 
   constructor(mysqlClient: Client) {
     this.historyRepository = new HistoryRepository(mysqlClient);
@@ -51,6 +56,12 @@ export default class HistoryController implements InterfaceController {
     throw new MissingImplementation();
   }
 
+  subscribeObject(ctx: Context) {
+    const target = ctx.sendEvents();
+
+    this.subscribedClients.push(target);
+  }
+
   async addObject(
     { response, request }: {
       response: Response;
@@ -68,12 +79,20 @@ export default class HistoryController implements InterfaceController {
     value.client = request.ip;
 
     value.amount = typeof value.amount === "undefined" ? 1 : value.amount;
-    value.origin = typeof value.origin === "undefined" ? 'android' : value.origin;
+    value.origin = typeof value.origin === "undefined"
+      ? "android"
+      : value.origin;
 
     const history = new HistoryEntity();
     Object.assign(history, value);
 
     const fetched = await this.historyRepository.addObject(history);
+    const message = new ServerSentEvent("message", fetched);
+
+    this.subscribedClients.forEach((subscribedClient) => {
+      subscribedClient.dispatchEvent(message);
+    });
+
     response.body = fetched;
   }
 }
