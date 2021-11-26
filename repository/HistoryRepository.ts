@@ -58,7 +58,7 @@ export default class HistoryRepository implements InterfaceRepository {
 
   public async addObject(object: HistoryEntity): Promise<HistoryEntity> {
     const insert = await this.mysqlClient.execute(
-      `INSERT INTO uwuifier.history (uuid, origin, client, server, amount) SELECT UNHEX(REPLACE(?, '-', '')) AS uuid, origin.uuid AS origin, INET_ATON(?), INET_ATON(?), ? AS amount FROM uwuifier.origin WHERE origin.title = ?`,
+      `INSERT INTO uwuifier.history (uuid, origin, client, server, amount) SELECT UNHEX(REPLACE(?, '-', '')) AS uuid, origin.uuid AS origin, INET_ATON(?), INET_ATON(?), ? AS amount FROM uwuifier.origin WHERE origin.title = LOWER(?)`,
       [
         object.uuid,
         object.client,

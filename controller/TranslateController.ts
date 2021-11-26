@@ -47,7 +47,7 @@ export default class TranslateController implements InterfaceController {
 
     translate.content = uwuifier.uwuifySentence(value.content);
 
-    history.origin = "API";
+    history.origin = "api";
     history.server = ipv4;
     history.client = request.ip;
     history.amount = 1;
