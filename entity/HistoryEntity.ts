@@ -1,7 +1,7 @@
 import BaseEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/entity/BaseEntity.ts";
 
 interface Data {
-  ipv4: string;
+  ip: string;
   cords: Location;
 }
 

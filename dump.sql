@@ -2,8 +2,8 @@ CREATE TABLE history (
 	uuid BINARY(16) NOT NULL,
 	origin BINARY(16) NOT NULL,
 
-	client_ipv4 INT UNSIGNED NOT NULL,
-	server_ipv4 INT UNSIGNED NOT NULL,
+	client_ip VARBINARY(16) NOT NULL,
+	server_ip VARBINARY(16) NOT NULL,
 
 	client_lat DECIMAL(10, 8) NOT NULL,
 	server_lat DECIMAL(10, 8) NOT NULL,

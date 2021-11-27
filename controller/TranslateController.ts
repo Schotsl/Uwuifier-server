@@ -9,7 +9,7 @@ import HistoryRepository from "../repository/HistoryRepository.ts";
 import TranslateEntity from "../entity/TranslateEntity.ts";
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 
-import ipv4 from "../ipv4.ts";
+import ipv64 from "../ipv64.ts";
 
 export default class TranslateController implements InterfaceController {
   private historyRepository: HistoryRepository;
@@ -47,8 +47,8 @@ export default class TranslateController implements InterfaceController {
     translate.content = uwuifier.uwuifySentence(value.content);
     response.body = translate;
 
-    const server = ipv4;
-    const client = request.ip === "127.0.0.1" ? ipv4 : request.ip;
+    const server = ipv64;
+    const client = request.ip === "127.0.0.1" ? ipv64 : request.ip;
 
     // TODO: Could be ran in parallel
 
@@ -67,7 +67,7 @@ export default class TranslateController implements InterfaceController {
     history.amount = 1;
 
     history.server = {
-      ipv4: server,
+      ip: server,
       cords: {
         lat: parsed[0].lat,
         lng: parsed[0].lon,
@@ -75,7 +75,7 @@ export default class TranslateController implements InterfaceController {
     };
 
     history.client = {
-      ipv4: client,
+      ip: client,
       cords: {
         lat: parsed[1].lat,
         lng: parsed[1].lon,

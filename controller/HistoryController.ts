@@ -18,7 +18,7 @@ import HistoryEntity from "../entity/HistoryEntity.ts";
 import HistoryRepository from "../repository/HistoryRepository.ts";
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 
-import ipv4 from "../ipv4.ts";
+import ipv64 from "../ipv64.ts";
 
 export default class HistoryController implements InterfaceController {
   private historyRepository: HistoryRepository;
@@ -80,15 +80,15 @@ export default class HistoryController implements InterfaceController {
       ? "android"
       : value.origin;
 
-    const server = ipv4;
-    const client = request.ip === "127.0.0.1" ? ipv4 : request.ip;
+    const server = ipv64;
+    const client = request.ip === "127.0.0.1" ? ipv64 : request.ip;
 
     // TODO: Could be ran in parallel
 
     const history = new HistoryEntity();
     const responses = await Promise.all([
-      fetch(`http://ip-api.com/json/${server}`),
-      fetch(`http://ip-api.com/json/${client}`),
+      fetch(`http://ip-api.com/json/${server}?fields=192`),
+      fetch(`http://ip-api.com/json/${client}?fields=192`),
     ]);
 
     const parsed = await Promise.all([
@@ -99,7 +99,7 @@ export default class HistoryController implements InterfaceController {
     Object.assign(history, value);
 
     history.server = {
-      ipv4: server,
+      ip: server,
       cords: {
         lat: parsed[0].lat,
         lng: parsed[0].lon,
@@ -107,7 +107,7 @@ export default class HistoryController implements InterfaceController {
     };
 
     history.client = {
-      ipv4: client,
+      ip: client,
       cords: {
         lat: parsed[1].lat,
         lng: parsed[1].lon,

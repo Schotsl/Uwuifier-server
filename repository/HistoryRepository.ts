@@ -26,7 +26,7 @@ export default class HistoryRepository implements InterfaceRepository {
     const promises = [];
 
     promises.push(this.mysqlClient.execute(
-      `SELECT HEX(history.uuid) AS uuid, origin.title AS origin, INET_NTOA(history.client_ipv4) AS client_ipv4, INET_NTOA(history.server_ipv4) AS server_ipv4, history.client_lat, history.client_lng, history.server_lat, history.server_lng, history.amount, history.created, history.updated FROM uwuifier.history LEFT JOIN uwuifier.origin ON history.origin = origin.uuid ORDER BY history.created DESC LIMIT ? OFFSET ?`,
+      `SELECT HEX(history.uuid) AS uuid, origin.title AS origin, INET6_NTOA(history.client_ip) AS client_ip, INET6_NTOA(history.server_ip) AS server_ip, history.client_lat, history.client_lng, history.server_lat, history.server_lng, history.amount, history.created, history.updated FROM uwuifier.history LEFT JOIN uwuifier.origin ON history.origin = origin.uuid ORDER BY history.created DESC LIMIT ? OFFSET ?`,
       [limit, offset],
     ));
 
@@ -58,14 +58,14 @@ export default class HistoryRepository implements InterfaceRepository {
 
   public async addObject(object: HistoryEntity): Promise<HistoryEntity> {
     const insert = await this.mysqlClient.execute(
-      `INSERT INTO uwuifier.history (uuid, origin, amount, server_ipv4, server_lat, server_lng, client_ipv4, client_lat, client_lng) SELECT UNHEX(REPLACE(?, '-', '')) AS uuid, origin.uuid AS origin, ? AS amount, INET_ATON(?), ?, ?, INET_ATON(?), ?, ? FROM uwuifier.origin WHERE origin.title = LOWER(?)`,
+      `INSERT INTO uwuifier.history (uuid, origin, amount, server_ip, server_lat, server_lng, client_ip, client_lat, client_lng) SELECT UNHEX(REPLACE(?, '-', '')) AS uuid, origin.uuid AS origin, ? AS amount, INET6_ATON(?), ?, ?, INET6_ATON(?), ?, ? FROM uwuifier.origin WHERE origin.title = LOWER(?)`,
       [
         object.uuid,
         object.amount,
-        object.server!.ipv4,
+        object.server!.ip,
         object.server!.cords.lat,
         object.server!.cords.lng,
-        object.client!.ipv4,
+        object.client!.ip,
         object.client!.cords.lat,
         object.client!.cords.lng,
         object.origin,
@@ -82,7 +82,7 @@ export default class HistoryRepository implements InterfaceRepository {
 
   public async getObject(uuid: string): Promise<HistoryEntity> {
     const data = await this.mysqlClient.execute(
-      `SELECT HEX(history.uuid) AS uuid, origin.title AS origin, INET_NTOA(history.client_ipv4) AS client_ipv4, INET_NTOA(history.server_ipv4) AS server_ipv4, history.client_lat, history.client_lng, history.server_lat, history.server_lng, history.amount, history.created, history.updated FROM uwuifier.history LEFT JOIN uwuifier.origin ON history.origin = origin.uuid WHERE history.uuid = UNHEX(REPLACE(?, '-', ''))`,
+      `SELECT HEX(history.uuid) AS uuid, origin.title AS origin, INET6_NTOA(history.client_ip) AS client_ip, INET6_NTOA(history.server_ip) AS server_ip, history.client_lat, history.client_lng, history.server_lat, history.server_lng, history.amount, history.created, history.updated FROM uwuifier.history LEFT JOIN uwuifier.origin ON history.origin = origin.uuid WHERE history.uuid = UNHEX(REPLACE(?, '-', ''))`,
       [uuid],
     );
 

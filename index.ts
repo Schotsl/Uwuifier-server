@@ -1,5 +1,5 @@
 // Load public IPv4 file so its in cache
-import "./ipv4.ts";
+import "./ipv64.ts";
 
 import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 import { Application } from "https://deno.land/x/oak@v9.0.1/mod.ts";

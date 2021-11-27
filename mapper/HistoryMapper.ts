@@ -15,7 +15,7 @@ export default class HistoryMapper implements InterfaceMapper {
     history.origin = row.origin;
 
     history.client = {
-      ipv4: row.client_ipv4,
+      ip: row.client_ip,
       cords: {
         lat: parseFloat(row.client_lat),
         lng: parseFloat(row.client_lng),
@@ -23,7 +23,7 @@ export default class HistoryMapper implements InterfaceMapper {
     };
 
     history.server = {
-      ipv4: row.server_ipv4,
+      ip: row.server_ip,
       cords: {
         lat: parseFloat(row.server_lat),
         lng: parseFloat(row.server_lng),
