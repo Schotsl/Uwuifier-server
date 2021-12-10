@@ -12,7 +12,7 @@ import {
   ServerSentEvent,
   ServerSentEventTarget,
   State,
-} from "https://deno.land/x/oak@v9.0.1/mod.ts";
+} from "https://deno.land/x/oak@v10.0.0/mod.ts";
 
 import HistoryEntity from "../entity/HistoryEntity.ts";
 import HistoryRepository from "../repository/HistoryRepository.ts";

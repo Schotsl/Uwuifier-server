@@ -1,5 +1,5 @@
 import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
-import { Request, Response } from "https://deno.land/x/oak@v9.0.1/mod.ts";
+import { Request, Response } from "https://deno.land/x/oak@v10.0.0/mod.ts";
 import { validateDatatype } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 
