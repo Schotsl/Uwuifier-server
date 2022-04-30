@@ -2,17 +2,21 @@
   "$schema": "https://deno.land/x/denon@2.4.8/schema.json",
   "scripts": {
     "test": {
-      "cmd": "deno test index.ts",
+      "cmd": "deno test",
       "desc": "Test Uwuifier-server"
     },
     "start": {
       "cmd": "deno run index.ts",
       "desc": "Start Uwuifier-server"
+    },
+    "compile": {
+      "cmd": "deno compile --target=x86_64-unknown-linux-gnu index.ts",
+      "desc": "Compile Uwuifier-server"
     }
   },
   "allow": {
-    "env": "MYSQL_HOSTNAME,MYSQL_USERNAME,MYSQL_PASSWORD,MYSQL_PORT,MYSQL_DATABASE,DENO_DEPLOYMENT_ID",
-    "net": "188.166.88.206:25060,0.0.0.0:8080,api.ipify.org",
+    "env": "MYSQL_HOSTNAME,MYSQL_USERNAME,MYSQL_PASSWORD,MYSQL_PORT,MYSQL_DATABASE,_TO,DENO_DEPLOYMENT_ID,DENO_REGION,OVERSIGHT_UUID",
+    "net": "aristotle-do-user-8895515-0.b.db.ondigitalocean.com:25060,0.0.0.0:8080",
     "read": ".env"
   },
   "logger": {
