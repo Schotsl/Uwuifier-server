@@ -1,31 +1,18 @@
-import { Router } from "https://deno.land/x/oak@v10.0.0/mod.ts";
+import GeneralRouter from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/router/GeneralRouter.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
 
-import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/connections/mysql.ts";
-import OriginController from "../controller/OriginController.ts";
+import OriginEntity from "../entity/OriginEntity.ts";
+import OriginCollection from "../collection/OriginCollection.ts";
 
-const originController = new OriginController(mysqlClient);
-const originRouter = new Router({
-  prefix: "/v1/origin",
-});
-
-originRouter.get(
-  "/",
-  originController.getCollection.bind(originController),
+const projectController = new GeneralController(
+  "origin",
+  OriginEntity,
+  OriginCollection,
 );
 
-originRouter.post(
-  "/",
-  originController.addObject.bind(originController),
+const projectRouter = new GeneralRouter(
+  projectController,
+  "origin",
 );
 
-originRouter.put(
-  "/:uuid",
-  originController.updateObject.bind(originController),
-);
-
-originRouter.delete(
-  "/:uuid",
-  originController.removeObject.bind(originController),
-);
-
-export default originRouter;
+export default projectRouter.router;

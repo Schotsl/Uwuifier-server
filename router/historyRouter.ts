@@ -1,36 +1,10 @@
-import { Router } from "https://deno.land/x/oak@v10.0.0/mod.ts";
-
-import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/connections/mysql.ts";
+import GeneralRouter from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/router/GeneralRouter.ts";
 import HistoryController from "../controller/HistoryController.ts";
 
-const historyController = new HistoryController(mysqlClient);
-const historyRouter = new Router({
-  prefix: "/v1/history",
-});
-
-historyRouter.get(
-  "/",
-  historyController.getCollection.bind(historyController),
+const historyController = new HistoryController("history");
+const historyRouter = new GeneralRouter(
+  historyController,
+  "server",
 );
 
-historyRouter.post(
-  "/",
-  historyController.addObject.bind(historyController),
-);
-
-historyRouter.put(
-  "/:uuid",
-  historyController.updateObject.bind(historyController),
-);
-
-historyRouter.delete(
-  "/:uuid",
-  historyController.removeObject.bind(historyController),
-);
-
-historyRouter.get(
-  "/subscribe",
-  historyController.subscribeObject.bind(historyController),
-);
-
-export default historyRouter;
+export default historyRouter.router;

@@ -1,31 +1,38 @@
-import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
-import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 import {
-  validateSmallint,
-  validateVarchar,
-} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
-
-import {
-  Context,
+  State,
   Request,
   Response,
-  ServerSentEvent,
-  ServerSentEventTarget,
-  State,
-} from "https://deno.land/x/oak@v10.0.0/mod.ts";
+} from "https://deno.land/x/oak@v10.5.1/mod.ts";
 
 import HistoryEntity from "../entity/HistoryEntity.ts";
-import HistoryRepository from "../repository/HistoryRepository.ts";
+import HistoryCollection from "../collection/HistoryCollection.ts";
+import OriginEntity from "../entity/HistoryEntity.ts";
+import OriginCollection from "../collection/HistoryCollection.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
+
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 
 import ipv64 from "../ipv64.ts";
 
 export default class HistoryController implements InterfaceController {
-  private historyRepository: HistoryRepository;
-  private subscribedClients: ServerSentEventTarget[] = [];
+  private originRepository: GeneralRepository;
+  private generalController: GeneralController;
 
-  constructor(mysqlClient: Client) {
-    this.historyRepository = new HistoryRepository(mysqlClient);
+  constructor(
+    name: string,
+  ) {
+    this.originRepository = new GeneralRepository(
+      'origin',
+      OriginEntity,
+      OriginCollection,
+    );
+
+    this.generalController = new GeneralController(
+      name,
+      HistoryEntity,
+      HistoryCollection,
+    );
   }
 
   async getCollection(
@@ -34,10 +41,16 @@ export default class HistoryController implements InterfaceController {
       state: State;
     },
   ) {
-    response.body = await this.historyRepository.getCollection(
-      state.offset,
-      state.limit,
-    );
+    await this.generalController.getCollection({ response, state });
+  }
+
+  async getObject(
+    { response, params }: {
+      response: Response;
+      params: { uuid: string };
+    },
+  ) {
+    await this.generalController.getObject({ response, params });
   }
 
   async removeObject(
@@ -47,45 +60,33 @@ export default class HistoryController implements InterfaceController {
       params: { uuid: string };
     },
   ) {
-    await this.historyRepository.removeObject(params.uuid);
-
-    response.status = 204;
-  }
-
-  updateObject() {
-    throw new MissingImplementation();
-  }
-
-  subscribeObject(ctx: Context) {
-    const target = ctx.sendEvents();
-
-    this.subscribedClients.push(target);
+    await this.generalController.removeObject({ response, params });
   }
 
   async addObject(
-    { response, request }: {
-      response: Response;
+    { request, response }: {
       request: Request;
+      response: Response;
     },
   ) {
     const body = await request.body();
     const value = await body.value;
-    delete value.uuid;
 
-    validateVarchar(value.origin, "origin", true);
-    validateSmallint(value.amount, "amount", true);
-
+    // I've set these default values for outdated Android apps who don't send proper data
     value.amount = typeof value.amount === "undefined" ? 1 : value.amount;
-    value.origin = typeof value.origin === "undefined"
-      ? "android"
-      : value.origin;
 
+    if (typeof value.origin === "undefined") {
+      // If the user has provided no origin we'll default to "android"
+      value.origin = "d5513234-d314-4ea1-a5a9-5eb7c8590e68";
+    } else {
+      // The getObject function will throw an error towards the user if the origin is not found
+      await this.originRepository.getObject(value.origin);
+    }
+
+    // Fetch the clients and server IP for storage
     const server = ipv64;
     const client = request.ip === "127.0.0.1" ? ipv64 : request.ip;
 
-    // TODO: Could be ran in parallel
-
-    const history = new HistoryEntity();
     const responses = await Promise.all([
       fetch(`http://ip-api.com/json/${server}?fields=192`),
       fetch(`http://ip-api.com/json/${client}?fields=192`),
@@ -96,9 +97,7 @@ export default class HistoryController implements InterfaceController {
       responses[1].json(),
     ]);
 
-    Object.assign(history, value);
-
-    history.server = {
+    value.server = {
       ip: server,
       cords: {
         lat: parsed[0].lat,
@@ -106,7 +105,7 @@ export default class HistoryController implements InterfaceController {
       },
     };
 
-    history.client = {
+    value.client = {
       ip: client,
       cords: {
         lat: parsed[1].lat,
@@ -114,13 +113,6 @@ export default class HistoryController implements InterfaceController {
       },
     };
 
-    const fetched = await this.historyRepository.addObject(history);
-    const message = new ServerSentEvent("message", fetched);
-
-    this.subscribedClients.forEach((subscribedClient) => {
-      subscribedClient.dispatchEvent(message);
-    });
-
-    response.body = fetched;
+    await this.generalController.addObject({ request, response, value });
   }
 }
