@@ -1,7 +1,9 @@
 import BaseEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/entity/BaseEntity.ts";
 
 import {
+  UUIDColumn,
   IPv64Column,
+  SmallColumn,
   VarcharColumn,
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/other/Columns.ts";
 
@@ -16,8 +18,8 @@ import {
 // }
 
 export default class HistoryEntity extends BaseEntity {
-  public amount: number | undefined;
-  public origin: string | undefined;
+  public origin = new UUIDColumn("origin");
+  public amount = new SmallColumn("amount", false, 1);
 
   public client_ip = new IPv64Column("client_ip");
   public client_lat = new VarcharColumn("client_lat");
