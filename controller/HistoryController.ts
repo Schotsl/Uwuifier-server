@@ -4,11 +4,13 @@ import {
   State,
 } from "https://deno.land/x/oak@v10.5.1/mod.ts";
 
-import HistoryEntity from "../entity/HistoryEntity.ts";
-import HistoryCollection from "../collection/HistoryCollection.ts";
 import OriginEntity from "../entity/OriginEntity.ts";
+import HistoryEntity from "../entity/HistoryEntity.ts";
 import OriginCollection from "../collection/OriginCollection.ts";
+import HistoryCollection from "../collection/HistoryCollection.ts";
 
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 
 import ipv64 from "../ipv64.ts";
@@ -95,21 +97,13 @@ export default class HistoryController implements InterfaceController {
       responses[1].json(),
     ]);
 
-    value.server = {
-      ip: server,
-      cords: {
-        lat: parsed[0].lat,
-        lng: parsed[0].lon,
-      },
-    };
+    value.client_ip = server;
+    value.client_lat = parsed[0].lat.toString();
+    value.client_lng = parsed[0].lon.toString();
 
-    value.client = {
-      ip: client,
-      cords: {
-        lat: parsed[1].lat,
-        lng: parsed[1].lon,
-      },
-    };
+    value.server_ip = client;
+    value.server_lat = parsed[1].lat.toString();
+    value.server_lng = parsed[1].lon.toString();
 
     await this.generalController.addObject({ request, response, value });
   }
