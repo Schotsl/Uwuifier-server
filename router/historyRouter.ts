@@ -4,7 +4,7 @@ import HistoryController from "../controller/HistoryController.ts";
 const historyController = new HistoryController("history");
 const historyRouter = new GeneralRouter(
   historyController,
-  "server",
+  "history",
 );
 
 export default historyRouter.router;

@@ -6,10 +6,8 @@ import {
 
 import HistoryEntity from "../entity/HistoryEntity.ts";
 import HistoryCollection from "../collection/HistoryCollection.ts";
-import OriginEntity from "../entity/HistoryEntity.ts";
-import OriginCollection from "../collection/HistoryCollection.ts";
-import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
+import OriginEntity from "../entity/OriginEntity.ts";
+import OriginCollection from "../collection/OriginCollection.ts";
 
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 
