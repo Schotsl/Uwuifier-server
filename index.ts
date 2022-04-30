@@ -6,7 +6,6 @@ import historyRouter from "./router/historyRouter.ts";
 
 import Server from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/other/Server.ts";
 
-
 const server = new Server();
 
 server.use(originRouter.routes());

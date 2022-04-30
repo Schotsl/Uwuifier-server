@@ -1,7 +1,7 @@
 import {
-  State,
   Request,
   Response,
+  State,
 } from "https://deno.land/x/oak@v10.5.1/mod.ts";
 
 import HistoryEntity from "../entity/HistoryEntity.ts";
@@ -23,7 +23,7 @@ export default class HistoryController implements InterfaceController {
     name: string,
   ) {
     this.originRepository = new GeneralRepository(
-      'origin',
+      "origin",
       OriginEntity,
       OriginCollection,
     );
