@@ -1,9 +1,9 @@
 import BaseEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/entity/BaseEntity.ts";
 
 import {
+  UUIDColumn,
   IPv64Column,
   SmallColumn,
-  UUIDColumn,
   VarcharColumn,
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/other/Columns.ts";
 
