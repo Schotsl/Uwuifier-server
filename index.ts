@@ -15,5 +15,3 @@ server.use(originRouter.allowedMethods());
 server.use(historyRouter.allowedMethods());
 
 server.listen();
-
-type Origin = "website" | "android" | "endpoint";
